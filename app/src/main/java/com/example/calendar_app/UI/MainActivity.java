@@ -13,6 +13,7 @@ import com.example.calendar_app.AppDatabase;
 import com.example.calendar_app.CalendarRepository;
 import com.example.calendar_app.Entities.UserEntity;
 import com.example.calendar_app.R;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,16 +30,36 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        repository = CalendarRepository.getInstance(this);
+//        repository = CalendarRepository.getInstance(this);
+////
+////        UserEntity user = new UserEntity();
+////        user.phone = "quang";
+////        user.password = "123456";
+////
+////
+////        Log.d("calendar_log", "before add user");
+////        repository.addUser(user);
+////        Log.d("calendar_log", "after add user");
 
-        UserEntity user = new UserEntity();
-        user.phone = "quang";
-        user.password = "123456";
-
-
-        Log.d("calendar_log", "before add user");
-        repository.addUser(user);
-        Log.d("calendar_log", "after add user");
+        Log.d("calendar_log", "before get user");
+        checkFirestoreConnection();
+        Log.d("calendar_log", "after get user");
 
     }
+    private void checkFirestoreConnection() {
+        Log.d("calendar_log", "checkFirestoreConnection: ");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Log.d("calendar_log", "checkFirestoreConnection 2: ");
+
+        db.collection("test_connection")  // Collection không tồn tại
+                .limit(1) // Hạn chế truy vấn
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots ->
+                        Log.d("Firestore", "🔥 Kết nối thành công với Firestore!")
+                )
+                .addOnFailureListener(e ->
+                        Log.e("Firestore", "❌ Lỗi kết nối Firestore", e)
+                );
+    }
+
 }
