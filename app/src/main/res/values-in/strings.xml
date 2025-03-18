@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Kalender</string>
+    <string name="login_title">Masuk</string>
+    <string name="username">Nomor telepon</string>
+    <string name="password">Kata sandi</string>
+    <string name="forgot_password">Lupa kata sandi?</string>
+    <string name="remember_login">Ingat login</string>
+    <string name="no_account">Tidak punya akun? </string>
+    <string name="register_now">Daftar sekarang</string>
+</resources>
