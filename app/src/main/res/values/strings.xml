@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">calendar_app</string>
+    <string name="app_name">Lịch</string>
+    <string name="login_title">Đăng nhập</string>
+    <string name="username">Số điện thoại</string>
+    <string name="password">Mật khẩu</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="remember_login">Ghi nhớ đăng nhập</string>
+    <string name="no_account">Chưa có tài khoản? </string>
+    <string name="register_now">Đăng ký ngay</string>
 </resources>
