@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Lịch</string>
-    <string name="login_title">Đăng nhập</string>
-    <string name="username">Số điện thoại</string>
-    <string name="password">Mật khẩu</string>
-    <string name="forgot_password">Quên mật khẩu?</string>
-    <string name="remember_login">Ghi nhớ đăng nhập</string>
-    <string name="no_account">Chưa có tài khoản? </string>
-    <string name="register_now">Đăng ký ngay</string>
+    <string name="app_name">Calendar</string>
+    <string name="login_title">Login</string>
+    <string name="username">Phone number</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="remember_login">Remember login</string>
+    <string name="no_account">Dont have an account? </string>
+    <string name="register_now">Register now</string>
 </resources>
