@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "events")
 public class EventEntity {
     @PrimaryKey(autoGenerate = true)
-    public int eventId;
+    public int id;
 
     @ColumnInfo(name = "user_id")
     public int userId;
@@ -15,12 +15,22 @@ public class EventEntity {
     @ColumnInfo(name = "title")
     public String title;
 
-    @ColumnInfo(name = "date")
-    public String date;
-
     @ColumnInfo(name = "description")
     public String description;
 
-    @ColumnInfo(name = "isSynced")
-    public boolean isSynced = false;
+    @ColumnInfo(name = "start_time")
+    public String startTime;
+
+    @ColumnInfo(name = "end_time")
+    public String endTime;
+
+    @ColumnInfo(name = "start_date")
+    public String startDate;
+
+    @ColumnInfo(name = "end_date")
+    public String endDate;
+
+//    thoi gian nhac nho truoc khi den start time
+    @ColumnInfo(name = "reminder_offset")
+    public int reminderOffset;
 }

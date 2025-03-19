@@ -1,4 +1,4 @@
-package com.example.calendar_app.UI;
+package com.example.calendar_app.Activities;
 
 import android.os.Bundle;
 

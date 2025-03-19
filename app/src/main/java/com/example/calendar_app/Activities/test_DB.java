@@ -1,4 +1,4 @@
-package com.example.calendar_app.UI;
+package com.example.calendar_app.Activities;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -6,12 +6,12 @@ import android.util.Log;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.calendar_app.CalendarRepository;
+import com.example.calendar_app.AppDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class test_DB extends AppCompatActivity {
 
-    CalendarRepository repository;
+    AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,16 +19,20 @@ public class test_DB extends AppCompatActivity {
         EdgeToEdge.enable(this);
 //        setContentView(R.layout.activity_main);
 
-//        repository = CalendarRepository.getInstance(this);
-////
-////        UserEntity user = new UserEntity();
-////        user.phone = "quang";
-////        user.password = "123456";
-////
-////
-////        Log.d("calendar_log", "before add user");
-////        repository.addUser(user);
-////        Log.d("calendar_log", "after add user");
+//          db = AppDatabase.getDatabase(this);
+//
+//        UserEntity user = new UserEntity();
+//        user.phone = "quang";
+//        user.password = "123456";
+//
+//
+//       Log.d("calendar_log", "before add user");
+//       new Thread(() -> {
+//          db.userDao().insert(user);
+//       }).start();
+//       Log.d("calendar_log", "after add user");
+
+
 
         Log.d("calendar_log", "before get user");
         checkFirestoreConnection();
