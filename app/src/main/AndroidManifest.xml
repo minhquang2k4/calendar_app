@@ -14,7 +14,7 @@
         android:name=".App"
         tools:targetApi="31">
         <activity
-            android:name=".UI.LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
