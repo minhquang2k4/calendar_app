@@ -16,7 +16,7 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Reminder Calendar" />
+        app:title="@string/calendar_title" />
 
     <CalendarView
         android:id="@+id/calendarView"
@@ -44,7 +44,7 @@
             android:id="@+id/selectedDateTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reminders for Today"
+            android:text="@string/reminders_for_today"
             android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="8dp"
-            android:contentDescription="Add Reminder"
+            android:contentDescription="@string/add_reminder_description"
             android:src="@drawable/ic_add" />
     </LinearLayout>
 
