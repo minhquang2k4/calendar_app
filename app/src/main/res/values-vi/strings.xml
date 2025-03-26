@@ -7,4 +7,55 @@
     <string name="remember_login">Ghi nhớ đăng nhập</string>
     <string name="no_account">Chưa có tài khoản? </string>
     <string name="register_now">Đăng ký ngay</string>
+    <string name="register_title">Đăng ký tài khoản</string>
+    <string name="username_hint">Tên người dùng</string>
+    <string name="phone_number_hint">Số điện thoại</string>
+    <string name="password_hint">Mật khẩu</string>
+    <string name="confirm_password_hint">Xác nhận mật khẩu</string>
+    <string name="register_button">Đăng ký</string>
+    <string name="login_prompt">Đã có tài khoản? Đăng nhập</string>
+    <string name="reminder_details_title">Chi tiết lời nhắc </string>
+    <string name="title_label">Tiêu đề</string>
+    <string name="description_label">Mô tả</string>
+    <string name="start_time_label">Thời gian bắt đầu</string>
+    <string name="end_time_label">Thời gian kết thúc</string>
+    <string name="notification_label">Thông báo</string>
+    <string name="status_label">Trạng thái: </string>
+    <string name="edit_button">Sửa</string>
+    <string name="delete_button">Xóa</string>
+    <string name="select_date_button">Chọn ngày</string>
+    <string name="select_time_button">Chọn giờ</string>
+    <string name="enable_notification">Bật thông báo</string>
+    <string name="notification_10min">trước 10 phút trước</string>
+    <string name="notification_30min">trước 30 phút </string>
+    <string name="notification_1hour">trước 1 giờ</string>
+    <string name="notification_1day">trước 1 ngày</string>
+    <string name="save_changes_button">Lưu thay đổi</string>
+    <string name="cancel_button">Hủy</string>
+
+    <!-- Status values -->
+    <string name="status_upcoming">Sắp diễn ra</string>
+    <string name="status_in_progress">Đang diễn ra</string>
+    <string name="status_completed">Đã hoàn thành</string>
+    <!-- Calendar Activity -->
+    <string name="calendar_title">Lịch Lời Nhắc</string>
+    <string name="reminders_for_today"> Lời nhắc cho hôm nay</string>
+    <string name="add_reminder_description">Thêm Lời Nhắc </string>
+    <!-- Add Reminder Screen -->
+    <string name="add_new_reminder_title">Thêm lời nhắc mới</string>
+    <string name="title_hint">Tiêu đề</string>
+    <string name="description_optional_hint">Mô tả (Tùy chọn)</string>
+    <string name="not_set">Chưa đặt</string>
+    <string name="notify_before">Thông báo trước</string>
+    <string name="notification_custom">Tùy chỉnh</string>
+    <string name="time_hint">Thời gian</string>
+    <string name="unit_hint">Đơn vị</string>
+    <string name="save_reminder_button">Lưu Nhắc nhở</string>
+
+    <!-- Time units for custom notification -->
+    <string-array name="time_units">
+        <item>Phút</item>
+        <item>Giờ</item>
+        <item>Ngày</item>
+    </string-array>
 </resources>

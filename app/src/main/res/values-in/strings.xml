@@ -7,4 +7,55 @@
     <string name="remember_login">Ingat login</string>
     <string name="no_account">Tidak punya akun? </string>
     <string name="register_now">Daftar sekarang</string>
+    <string name="register_title">Daftar Akun</string>
+    <string name="username_hint">Nama Pengguna</string>
+    <string name="phone_number_hint">Nomor Telepon</string>
+    <string name="password_hint">Kata Sandi</string>
+    <string name="confirm_password_hint">Konfirmasi Kata Sandi</string>
+    <string name="register_button">Daftar</string>
+    <string name="login_prompt">Sudah punya akun? Masuk</string>
+    <string name="reminder_details_title">Detail Pengingat</string>
+    <string name="title_label">Judul</string>
+    <string name="description_label">Deskripsi</string>
+    <string name="start_time_label">Waktu Mulai</string>
+    <string name="end_time_label">Waktu Selesai</string>
+    <string name="notification_label">Notifikasi</string>
+    <string name="status_label">Status: </string>
+    <string name="edit_button">Edit</string>
+    <string name="delete_button">Hapus</string>
+    <string name="select_date_button">Pilih Tanggal</string>
+    <string name="select_time_button">Pilih Waktu</string>
+    <string name="enable_notification">Aktifkan notifikasi</string>
+    <string name="notification_10min">10 menit sebelumnya</string>
+    <string name="notification_30min">30 menit sebelumnya</string>
+    <string name="notification_1hour">1 jam sebelumnya</string>
+    <string name="notification_1day">1 hari sebelumnya</string>
+    <string name="save_changes_button">Simpan Perubahan</string>
+    <string name="cancel_button">Batal</string>
+
+    <!-- Status values -->
+    <string name="status_upcoming">Akan Datang</string>
+    <string name="status_in_progress">Sedang Berlangsung</string>
+    <string name="status_completed">Selesai</string>
+
+    <!-- Calendar Activity -->
+    <string name="calendar_title">Kalender Pengingat</string>
+    <string name="reminders_for_today">Pengingat untuk Hari Ini</string>
+    <string name="add_reminder_description">Tambah Pengingat</string>
+    <!-- Add Reminder Screen -->
+    <string name="add_new_reminder_title">Tambah Pengingat Baru</string>
+    <string name="title_hint">Judul</string>
+    <string name="description_optional_hint">Deskripsi (Opsional)</string>
+    <string name="notification_custom">Kustom</string>
+    <string name="time_hint">Waktu</string>
+    <string name="unit_hint">Unit</string>
+    <string name="save_reminder_button">Simpan Pengingat</string>
+    <string name="not_set">Belum diatur</string>
+    <string name="notify_before">Beritahu sebelum</string>
+    <!-- Time units for custom notification -->
+    <string-array name="time_units">
+        <item>Menit</item>
+        <item>Jam</item>
+        <item>Hari</item>
+    </string-array>
 </resources>
