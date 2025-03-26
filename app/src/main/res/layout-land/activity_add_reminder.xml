@@ -18,7 +18,7 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Add New Reminder" />
+            app:title="@string/add_new_reminder_title" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -47,7 +47,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:hint="Title">
+                    android:hint="@string/title_label">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/titleEditText"
@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:hint="Description (Optional)">
+                    android:hint="@string/description_optional_hint">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/descriptionEditText"
@@ -82,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Start Time"
+                    android:text="@string/start_time_label"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -100,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        android:text="Select Date"
+                        android:text="@string/select_date_button"
                         app:icon="@drawable/ic_calender" />
 
                     <com.google.android.material.button.MaterialButton
@@ -109,7 +109,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Select Time"
+                        android:text="@string/select_time_button"
                         app:icon="@drawable/ic_time" />
 
                 </LinearLayout>
@@ -119,7 +119,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Not set"
+                    android:text="@string/not_set"
                     android:textColor="@color/gray" />
 
                 <!-- End Time Section -->
@@ -127,7 +127,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="End Time"
+                    android:text="@string/end_time_label"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -145,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="1"
-                        android:text="Select Date"
+                        android:text="@string/select_date_button"
                         app:icon="@drawable/ic_calender" />
 
                     <com.google.android.material.button.MaterialButton
@@ -154,7 +154,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Select Time"
+                        android:text="@string/select_time_button"
                         app:icon="@drawable/ic_time" />
 
                 </LinearLayout>
@@ -164,7 +164,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:text="Not set"
+                    android:text="@string/not_set"
                     android:textColor="@color/gray" />
 
             </LinearLayout>
@@ -181,7 +181,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="Notification"
+                    android:text="@string/notification_label"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -192,7 +192,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:checked="true"
-                    android:text="Enable notification"
+                    android:text="@string/enable_notification"
                     android:textColor="@color/black" />
 
                 <LinearLayout
@@ -206,7 +206,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:text="Notify before"
+                        android:text="@string/notify_before"
                         android:textColor="@color/black" />
 
                     <RadioGroup
@@ -220,31 +220,31 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="10 minutes before" />
+                            android:text="@string/notification_10min" />
 
                         <RadioButton
                             android:id="@+id/radio30min"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="30 minutes before" />
+                            android:text="@string/notification_30min" />
 
                         <RadioButton
                             android:id="@+id/radio1hour"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="1 hour before" />
+                            android:text="@string/notification_1hour" />
 
                         <RadioButton
                             android:id="@+id/radio1day"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="1 day before" />
+                            android:text="@string/notification_1day" />
 
                         <RadioButton
                             android:id="@+id/radioCustom"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Custom" />
+                            android:text="@string/notification_custom" />
 
                     </RadioGroup>
 
@@ -262,7 +262,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
                             android:layout_weight="1"
-                            android:hint="Time">
+                            android:hint="@string/time_hint">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/customNotificationTimeEditText"
@@ -277,7 +277,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:hint="Unit">
+                            android:hint="@string/unit_hint">
 
                             <AutoCompleteTextView
                                 android:id="@+id/customNotificationUnitDropdown"
@@ -298,7 +298,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:padding="12dp"
-                    android:text="Save Reminder"
+                    android:text="@string/save_reminder_button"
                     android:textSize="16sp"
                     app:cornerRadius="8dp" />
 

@@ -7,4 +7,57 @@
     <string name="remember_login">Remember login</string>
     <string name="no_account">Dont have an account? </string>
     <string name="register_now">Register now</string>
+    <string name="register_title">Register Account</string>
+    <string name="username_hint">Username</string>
+    <string name="phone_number_hint">Phone Number</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="register_button">Register</string>
+    <string name="login_prompt">Already have an account? Login</string>
+    <string name="reminder_details_title">Reminder Details</string>
+    <string name="title_label">Title</string>
+    <string name="description_label">Description</string>
+    <string name="start_time_label">Start Time</string>
+    <string name="end_time_label">End Time</string>
+    <string name="notification_label">Notification</string>
+    <string name="status_label">Status: </string>
+    <string name="edit_button">Edit</string>
+    <string name="delete_button">Delete</string>
+    <string name="select_date_button">Select Date</string>
+    <string name="select_time_button">Select Time</string>
+    <string name="enable_notification">Enable notification</string>
+    <string name="notification_10min">10 minutes before</string>
+    <string name="notification_30min">30 minutes before</string>
+    <string name="notification_1hour">1 hour before</string>
+    <string name="notification_1day">1 day before</string>
+    <string name="save_changes_button">Save Changes</string>
+    <string name="cancel_button">Cancel</string>
+
+    <!-- Status values -->
+    <string name="status_upcoming">Upcoming</string>
+    <string name="status_in_progress">In Progress</string>
+    <string name="status_completed">Completed</string>
+
+    <!-- Calendar Activity -->
+    <string name="calendar_title">Reminder Calendar</string>
+    <string name="reminders_for_today">Reminders for Today</string>
+    <string name="add_reminder_description">Add Reminder</string>
+
+    <!-- Add Reminder Screen -->
+    <string name="add_new_reminder_title">Add New Reminder</string>
+    <string name="title_hint">Title</string>
+    <string name="not_set">Not set</string>
+    <string name="notify_before">Notify before</string>
+    <string name="description_optional_hint">Description (Optional)</string>
+    <string name="notification_custom">Custom</string>
+    <string name="time_hint">Time</string>
+    <string name="unit_hint">Unit</string>
+    <string name="save_reminder_button">Save Reminder</string>
+
+    <!-- Time units for custom notification -->
+    <string-array name="time_units">
+        <item>Minutes</item>
+        <item>Hours</item>
+        <item>Days</item>
+    </string-array>
 </resources>

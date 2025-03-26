@@ -133,15 +133,27 @@ public class ReminderDetailActivity extends AppCompatActivity {
         notificationTextView.setText(formatNotificationTime(reminder.getNotificationMinutes()) + " before");
 
         LocalDateTime now = LocalDateTime.now();
+//        if (now.isAfter(endDateTime)) {
+//            statusTextView.setText("Completed");
+//            statusTextView.setBackgroundResource(R.drawable.status_background);
+//        } else if (now.isAfter(startDateTime)) {
+//            statusTextView.setText("In Progress");
+//            statusTextView.setBackgroundResource(R.drawable.status_background);
+//            statusTextView.setTextColor(getResources().getColor(R.color.white));
+//        } else {
+//            statusTextView.setText("Upcoming");
+//            statusTextView.setBackgroundResource(R.drawable.status_background);
+//            statusTextView.setTextColor(getResources().getColor(R.color.white));
+//        }
         if (now.isAfter(endDateTime)) {
-            statusTextView.setText("Completed");
+            statusTextView.setText(getString(R.string.status_completed));
             statusTextView.setBackgroundResource(R.drawable.status_background);
         } else if (now.isAfter(startDateTime)) {
-            statusTextView.setText("In Progress");
+            statusTextView.setText(getString(R.string.status_in_progress));
             statusTextView.setBackgroundResource(R.drawable.status_background);
             statusTextView.setTextColor(getResources().getColor(R.color.white));
         } else {
-            statusTextView.setText("Upcoming");
+            statusTextView.setText(getString(R.string.status_upcoming));
             statusTextView.setBackgroundResource(R.drawable.status_background);
             statusTextView.setTextColor(getResources().getColor(R.color.white));
         }
