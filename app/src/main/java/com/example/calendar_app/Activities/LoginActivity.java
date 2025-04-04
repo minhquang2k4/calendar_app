@@ -1,9 +1,9 @@
 package com.example.calendar_app.Activities;
 
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = "LoginActivity";
     private TextInputEditText etUsername, etPassword;
     private CheckBox cbRemember;
     private Button btnLogin;
@@ -48,13 +49,13 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(v -> attemptLogin());
 
         tvRegister.setOnClickListener(v -> {
+            Log.d(TAG, "Register button clicked");
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
 
         tvForgotPassword.setOnClickListener(v -> {
-            // Handle forgot password logic
-            Toast.makeText(this, "Forgot password clicked", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Quên mật khẩu được bấm", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -62,16 +63,12 @@ public class LoginActivity extends AppCompatActivity {
         String phone = etUsername.getText().toString().trim();
         String password = etPassword.getText().toString().trim();
 
-        if (phone.isEmpty()) {
-            etUsername.setError("Phone number is required");
+        if (phone.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Vui lòng nhập số điện thoại và mật khẩu", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (password.isEmpty()) {
-            etPassword.setError("Password is required");
-            return;
-        }
-
+        Log.d(TAG, "Attempting login with phone: " + phone + ", password: " + password);
         new LoginTask(phone, password).execute();
     }
 
@@ -86,27 +83,28 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected UserEntity doInBackground(Void... voids) {
-            return db.userDao().getUserByPhoneAndPassword(phone, password);
+            try {
+                UserEntity user = db.userDao().getUserByPhoneAndPassword(phone, password);
+                Log.d(TAG, "User from DB: " + (user != null ? user.phone : "null"));
+                return user;
+            } catch (Exception e) {
+                Log.e(TAG, "Error querying database: " + e.getMessage());
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(UserEntity user) {
             if (user != null) {
-                // Đăng nhập thành công
-                Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-
-                // Save login state if remember me is checked
-                if (cbRemember.isChecked()) {
-                    // You can save user token or id in SharedPreferences here
-                }
-
-                // Proceed to main activity
+                Log.d(TAG, "Login successful for user: " + user.phone + ", ID: " + user.id);
+                Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
+                intent.putExtra("USER_ID", user.id);
                 startActivity(intent);
                 finish();
             } else {
-                // Login failed
-                Toast.makeText(LoginActivity.this, "Invalid phone or password", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Login failed: Invalid phone or password");
+                Toast.makeText(LoginActivity.this, "Số điện thoại hoặc mật khẩu không đúng", Toast.LENGTH_SHORT).show();
             }
         }
     }

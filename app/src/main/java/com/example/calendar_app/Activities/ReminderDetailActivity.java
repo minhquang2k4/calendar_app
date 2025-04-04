@@ -2,6 +2,7 @@ package com.example.calendar_app.Activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.Entities.EventEntity;
 import com.example.calendar_app.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -32,14 +35,16 @@ public class ReminderDetailActivity extends AppCompatActivity {
     private MaterialButton editButton, deleteButton, saveButton, cancelButton;
     private SwitchMaterial notificationSwitch;
     private RadioGroup notificationTimeRadioGroup;
-
-    private Reminder reminder;
+    private AppDatabase db;
+    private EventEntity event;
+    private int eventId, userId;
     private LocalDate startDate, endDate;
     private LocalTime startTime, endTime;
 
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy");
-    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
-    private DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy 'at' h:mm a");
+    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    private DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("EEE, MMM d, yyyy 'at' HH:mm");
+    private DateTimeFormatter dbDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,15 +54,14 @@ public class ReminderDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        db = AppDatabase.getDatabase(this);
+        eventId = getIntent().getIntExtra("EVENT_ID", -1);
+        userId = getIntent().getIntExtra("USER_ID", -1);
 
         initializeViews();
-
-        loadReminderData();
-
+        loadEventData();
         setupListeners();
-
-        updateUI();
     }
 
     private void initializeViews() {
@@ -84,34 +88,13 @@ public class ReminderDetailActivity extends AppCompatActivity {
         cancelButton = findViewById(R.id.cancelButton);
     }
 
-    private void loadReminderData() {
-
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime start = now.plusHours(1);
-        LocalDateTime end = start.plusHours(1);
-
-        reminder = new Reminder(
-                "1",
-                "Project Team Meeting",
-                "Discuss project progress and next steps with the team. Prepare presentation and status report.",
-                start.toLocalDate(),
-                start.toLocalTime(),
-                end.toLocalDate(),
-                end.toLocalTime(),
-                true,
-                10
-        );
-
-        startDate = reminder.getStartDate();
-        startTime = reminder.getStartTime();
-        endDate = reminder.getEndDate();
-        endTime = reminder.getEndTime();
+    private void loadEventData() {
+        new LoadEventTask().execute(eventId);
     }
 
     private void setupListeners() {
         editButton.setOnClickListener(v -> switchToEditMode());
         deleteButton.setOnClickListener(v -> showDeleteConfirmation());
-
         startDateButton.setOnClickListener(v -> showDatePicker(true));
         startTimeButton.setOnClickListener(v -> showTimePicker(true));
         endDateButton.setOnClickListener(v -> showDatePicker(false));
@@ -121,60 +104,47 @@ public class ReminderDetailActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        titleTextView.setText(reminder.getTitle());
-        descriptionTextView.setText(reminder.getDescription());
-
-        LocalDateTime startDateTime = LocalDateTime.of(reminder.getStartDate(), reminder.getStartTime());
-        LocalDateTime endDateTime = LocalDateTime.of(reminder.getEndDate(), reminder.getEndTime());
-
-        startTimeTextView.setText(startDateTime.format(fullFormatter));
-        endTimeTextView.setText(endDateTime.format(fullFormatter));
-
-        notificationTextView.setText(formatNotificationTime(reminder.getNotificationMinutes()) + " before");
+        titleTextView.setText(event.title);
+        descriptionTextView.setText(event.description);
+        startTimeTextView.setText(LocalDate.parse(event.startDate, dbDateFormatter)
+                .atTime(LocalTime.parse(event.startTime, timeFormatter)).format(fullFormatter));
+        endTimeTextView.setText(LocalDate.parse(event.endDate, dbDateFormatter)
+                .atTime(LocalTime.parse(event.endTime, timeFormatter)).format(fullFormatter));
+        notificationTextView.setText(formatNotificationTime(event.reminderOffset) + " trước");
 
         LocalDateTime now = LocalDateTime.now();
-//        if (now.isAfter(endDateTime)) {
-//            statusTextView.setText("Completed");
-//            statusTextView.setBackgroundResource(R.drawable.status_background);
-//        } else if (now.isAfter(startDateTime)) {
-//            statusTextView.setText("In Progress");
-//            statusTextView.setBackgroundResource(R.drawable.status_background);
-//            statusTextView.setTextColor(getResources().getColor(R.color.white));
-//        } else {
-//            statusTextView.setText("Upcoming");
-//            statusTextView.setBackgroundResource(R.drawable.status_background);
-//            statusTextView.setTextColor(getResources().getColor(R.color.white));
-//        }
+        LocalDateTime startDateTime = LocalDate.parse(event.startDate, dbDateFormatter)
+                .atTime(LocalTime.parse(event.startTime, timeFormatter));
+        LocalDateTime endDateTime = LocalDate.parse(event.endDate, dbDateFormatter)
+                .atTime(LocalTime.parse(event.endTime, timeFormatter));
+
         if (now.isAfter(endDateTime)) {
-            statusTextView.setText(getString(R.string.status_completed));
+            statusTextView.setText("Đã hoàn thành");
             statusTextView.setBackgroundResource(R.drawable.status_background);
         } else if (now.isAfter(startDateTime)) {
-            statusTextView.setText(getString(R.string.status_in_progress));
+            statusTextView.setText("Đang diễn ra");
             statusTextView.setBackgroundResource(R.drawable.status_background);
             statusTextView.setTextColor(getResources().getColor(R.color.white));
         } else {
-            statusTextView.setText(getString(R.string.status_upcoming));
+            statusTextView.setText("Sắp tới");
             statusTextView.setBackgroundResource(R.drawable.status_background);
             statusTextView.setTextColor(getResources().getColor(R.color.white));
         }
 
-        titleEditText.setText(reminder.getTitle());
-        descriptionEditText.setText(reminder.getDescription());
-
+        titleEditText.setText(event.title);
+        descriptionEditText.setText(event.description);
+        startDate = LocalDate.parse(event.startDate, dbDateFormatter);
+        startTime = LocalTime.parse(event.startTime, timeFormatter);
+        endDate = LocalDate.parse(event.endDate, dbDateFormatter);
+        endTime = LocalTime.parse(event.endTime, timeFormatter);
         updateDateTimeButtons();
+        notificationSwitch.setChecked(event.hasNotification);
 
-        notificationSwitch.setChecked(reminder.isHasNotification());
-
-        int notificationMinutes = reminder.getNotificationMinutes();
-        if (notificationMinutes == 10) {
-            notificationTimeRadioGroup.check(R.id.radio10min);
-        } else if (notificationMinutes == 30) {
-            notificationTimeRadioGroup.check(R.id.radio30min);
-        } else if (notificationMinutes == 60) {
-            notificationTimeRadioGroup.check(R.id.radio1hour);
-        } else if (notificationMinutes == 24 * 60) {
-            notificationTimeRadioGroup.check(R.id.radio1day);
-        }
+        int minutes = event.reminderOffset;
+        if (minutes == 10) notificationTimeRadioGroup.check(R.id.radio10min);
+        else if (minutes == 30) notificationTimeRadioGroup.check(R.id.radio30min);
+        else if (minutes == 60) notificationTimeRadioGroup.check(R.id.radio1hour);
+        else if (minutes == 24 * 60) notificationTimeRadioGroup.check(R.id.radio1day);
     }
 
     private void updateDateTimeButtons() {
@@ -196,60 +166,45 @@ public class ReminderDetailActivity extends AppCompatActivity {
 
     private void showDatePicker(boolean isStart) {
         LocalDate currentDate = isStart ? startDate : endDate;
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, year, month, dayOfMonth) -> {
                     LocalDate selectedDate = LocalDate.of(year, month + 1, dayOfMonth);
                     if (isStart) {
                         startDate = selectedDate;
-
-                        if (endDate.isBefore(startDate)) {
-                            endDate = startDate;
-                            updateDateTimeButtons();
-                        }
+                        if (endDate.isBefore(startDate)) endDate = startDate;
                     } else {
                         endDate = selectedDate;
                     }
                     updateDateTimeButtons();
                 },
-                currentDate.getYear(),
-                currentDate.getMonthValue() - 1,
-                currentDate.getDayOfMonth()
+                currentDate.getYear(), currentDate.getMonthValue() - 1, currentDate.getDayOfMonth()
         );
-
         if (!isStart) {
             datePickerDialog.getDatePicker().setMinDate(
                     startDate.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli());
         }
-
         datePickerDialog.show();
     }
 
     private void showTimePicker(boolean isStart) {
         LocalTime currentTime = isStart ? startTime : endTime;
-
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 this,
                 (view, hourOfDay, minute) -> {
                     LocalTime selectedTime = LocalTime.of(hourOfDay, minute);
                     if (isStart) {
                         startTime = selectedTime;
-
                         if (startDate.equals(endDate) && endTime.isBefore(startTime)) {
                             endTime = startTime.plusHours(1);
-                            updateDateTimeButtons();
                         }
                     } else {
                         endTime = selectedTime;
                     }
                     updateDateTimeButtons();
                 },
-                currentTime.getHour(),
-                currentTime.getMinute(),
-                false
+                currentTime.getHour(), currentTime.getMinute(), true
         );
-
         timePickerDialog.show();
     }
 
@@ -258,65 +213,93 @@ public class ReminderDetailActivity extends AppCompatActivity {
         String description = descriptionEditText.getText().toString().trim();
 
         if (title.isEmpty()) {
-            titleEditText.setError("Title is required");
+            titleEditText.setError("Tiêu đề không được để trống");
             return;
         }
 
         boolean hasNotification = notificationSwitch.isChecked();
-        int notificationMinutes = 10; // Default
-
+        int notificationMinutes = 10;
         if (hasNotification) {
-            int selectedRadioButtonId = notificationTimeRadioGroup.getCheckedRadioButtonId();
-
-            if (selectedRadioButtonId == R.id.radio10min) {
-                notificationMinutes = 10;
-            } else if (selectedRadioButtonId == R.id.radio30min) {
-                notificationMinutes = 30;
-            } else if (selectedRadioButtonId == R.id.radio1hour) {
-                notificationMinutes = 60;
-            } else if (selectedRadioButtonId == R.id.radio1day) {
-                notificationMinutes = 24 * 60;
-            }
+            int selectedRadioId = notificationTimeRadioGroup.getCheckedRadioButtonId();
+            if (selectedRadioId == R.id.radio10min) notificationMinutes = 10;
+            else if (selectedRadioId == R.id.radio30min) notificationMinutes = 30;
+            else if (selectedRadioId == R.id.radio1hour) notificationMinutes = 60;
+            else if (selectedRadioId == R.id.radio1day) notificationMinutes = 24 * 60;
         }
 
-        reminder.setTitle(title);
-        reminder.setDescription(description);
-        reminder.setStartDate(startDate);
-        reminder.setStartTime(startTime);
-        reminder.setEndDate(endDate);
-        reminder.setEndTime(endTime);
-        reminder.setHasNotification(hasNotification);
-        reminder.setNotificationMinutes(notificationMinutes);
+        event.title = title;
+        event.description = description;
+        event.startDate = startDate.format(dbDateFormatter);
+        event.startTime = startTime.format(timeFormatter);
+        event.endDate = endDate.format(dbDateFormatter);
+        event.endTime = endTime.format(timeFormatter);
+        event.hasNotification = hasNotification;
+        event.reminderOffset = notificationMinutes;
 
-
-        updateUI();
-
-        switchToViewMode();
-
-        Toast.makeText(this, "Changes saved", Toast.LENGTH_SHORT).show();
+        new UpdateEventTask().execute(event);
     }
 
     private void showDeleteConfirmation() {
         new AlertDialog.Builder(this)
-                .setTitle("Delete Reminder")
-                .setMessage("Are you sure you want to delete this reminder?")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    Toast.makeText(this, "Reminder deleted", Toast.LENGTH_SHORT).show();
-                    finish();
-                })
-                .setNegativeButton("Cancel", null)
+                .setTitle("Xóa sự kiện")
+                .setMessage("Bạn có chắc chắn muốn xóa sự kiện này?")
+                .setPositiveButton("Xóa", (dialog, which) -> new DeleteEventTask().execute(event))
+                .setNegativeButton("Hủy", null)
                 .show();
     }
 
     private String formatNotificationTime(int minutes) {
-        if (minutes < 60) {
-            return minutes + " minutes";
-        } else if (minutes < 24 * 60) {
-            int hours = minutes / 60;
-            return hours + (hours == 1 ? " hour" : " hours");
-        } else {
-            int days = minutes / (24 * 60);
-            return days + (days == 1 ? " day" : " days");
+        if (minutes < 60) return minutes + " phút";
+        else if (minutes < 24 * 60) return (minutes / 60) + " giờ";
+        else return (minutes / (24 * 60)) + " ngày";
+    }
+
+    private class LoadEventTask extends AsyncTask<Integer, Void, EventEntity> {
+        @Override
+        protected EventEntity doInBackground(Integer... ids) {
+            return db.eventDao().getEventById(ids[0]);
+        }
+
+        @Override
+        protected void onPostExecute(EventEntity loadedEvent) {
+            if (loadedEvent != null) {
+                event = loadedEvent;
+                updateUI();
+            } else {
+                Toast.makeText(ReminderDetailActivity.this, "Không tìm thấy sự kiện", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    private class UpdateEventTask extends AsyncTask<EventEntity, Void, Void> {
+        @Override
+        protected Void doInBackground(EventEntity... events) {
+            db.eventDao().update(events[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(ReminderDetailActivity.this, "Đã lưu thay đổi", Toast.LENGTH_SHORT).show();
+            updateUI();
+            switchToViewMode();
+            setResult(RESULT_OK);
+        }
+    }
+
+    private class DeleteEventTask extends AsyncTask<EventEntity, Void, Void> {
+        @Override
+        protected Void doInBackground(EventEntity... events) {
+            db.eventDao().delete(events[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(ReminderDetailActivity.this, "Đã xóa sự kiện", Toast.LENGTH_SHORT).show();
+            setResult(RESULT_OK);
+            finish();
         }
     }
 

@@ -25,6 +25,10 @@
         <activity android:name=".Activities.RegisterActivity" />
         <activity android:name=".Activities.CalendarActivity" />
 
+        <activity
+            android:name=".Activities.AddReminderActivity"
+            android:parentActivityName=".Activities.CalendarActivity" />
+
         <!-- Activity chi tiết nhắc nhở -->
         <activity
             android:name=".Activities.ReminderDetailActivity"

@@ -30,7 +30,8 @@ public class EventEntity {
     @ColumnInfo(name = "end_date")
     public String endDate;
 
-//    thoi gian nhac nho truoc khi den start time
+    //    thoi gian nhac nho truoc khi den start time
     @ColumnInfo(name = "reminder_offset")
     public int reminderOffset;
+    public boolean hasNotification;
 }

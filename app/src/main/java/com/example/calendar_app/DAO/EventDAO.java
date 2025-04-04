@@ -8,17 +8,25 @@ import androidx.room.Update;
 
 import com.example.calendar_app.Entities.EventEntity;
 
+import java.util.List;
+
 @Dao
 public interface EventDAO {
     @Insert
-    void insert(EventEntity event);
-
-    @Query("SELECT * FROM events WHERE id = :id")
-    EventEntity getEventById(int id);
+    Long insert(EventEntity event);
 
     @Update
     void update(EventEntity event);
 
     @Delete
     void delete(EventEntity event);
+
+    @Query("SELECT * FROM events WHERE id = :id")
+    EventEntity getEventById(int id);
+
+    @Query("SELECT * FROM events WHERE user_id = :userId ORDER BY start_date ASC, start_time ASC")
+    List<EventEntity> getEventsByUserId(int userId);
+
+    @Query("SELECT * FROM events WHERE user_id = :userId AND start_date = :date ORDER BY start_time ASC")
+    List<EventEntity> getEventsByUserAndDate(int userId, String date);
 }
