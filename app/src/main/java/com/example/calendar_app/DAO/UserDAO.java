@@ -20,4 +20,9 @@ public interface UserDAO {
 
    @Update
    void update(UserEntity user);
+   @Query("SELECT * FROM users WHERE phone = :phone AND password = :password")
+   UserEntity getUserByPhoneAndPassword(String phone, String password);
+
+   @Query("SELECT * FROM users WHERE phone = :phone")
+   UserEntity getUserByPhone(String phone);
 }

@@ -11,16 +11,14 @@ import com.example.calendar_app.DAO.UserDAO;
 import com.example.calendar_app.Entities.EventEntity;
 import com.example.calendar_app.Entities.UserEntity;
 
-@Database(entities = {UserEntity.class, EventEntity.class}, version = 1)
+@Database(entities = {UserEntity.class, EventEntity.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase db;
 
-//    Khai báo các DAO ở đây
     public abstract UserDAO userDao();
     public abstract EventDAO eventDao();
 
-
-    public static AppDatabase getDatabase(final Context context) {
+    public static synchronized AppDatabase getDatabase(final Context context) {
         if (db == null) {
             db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "calendar")
                     .fallbackToDestructiveMigration()
