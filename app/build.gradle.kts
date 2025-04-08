@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.google.gms.google-services")
+    id("com.google.gms.google-services") version "4.4.2"
 }
 
 android {
@@ -42,9 +42,11 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     val room_version = "2.6.1"
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.8.0")
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
-
     implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-firestore")
+
 }

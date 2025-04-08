@@ -34,4 +34,13 @@ public class EventEntity {
     @ColumnInfo(name = "reminder_offset")
     public int reminderOffset;
     public boolean hasNotification;
+    public void setId(int id) {
+        this.id = id;
+    }
+    public int getUserId(){
+        return userId;
+    }
+    public int getId(){
+        return id;
+    }
 }

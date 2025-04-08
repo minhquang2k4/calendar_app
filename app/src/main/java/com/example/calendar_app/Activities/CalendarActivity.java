@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.DAO.EventDAO;
+import com.example.calendar_app.DAO.FirebaseEventDAO;
 import com.example.calendar_app.Entities.EventEntity;
 import com.example.calendar_app.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,6 +32,7 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
     private TextView selectedDateTV;
     private LocalDate selectedDate;
     private AppDatabase db;
+    private EventDAO eventDAO; // Sử dụng FirebaseEventDAO
     private int currentUserId;
 
     @Override
@@ -38,6 +41,9 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
         setContentView(R.layout.activity_calendar);
 
         db = AppDatabase.getDatabase(this);
+        EventDAO roomEventDAO = db.eventDao();
+        eventDAO = new FirebaseEventDAO(roomEventDAO); // Khởi tạo FirebaseEventDAO
+
         currentUserId = getIntent().getIntExtra("USER_ID", -1);
         if (currentUserId == -1) {
             Toast.makeText(this, "Không tìm thấy người dùng", Toast.LENGTH_SHORT).show();
@@ -91,7 +97,7 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
     private class LoadEventsTask extends AsyncTask<Void, Void, List<Reminder>> {
         @Override
         protected List<Reminder> doInBackground(Void... voids) {
-            List<EventEntity> events = db.eventDao().getEventsByUserId(currentUserId);
+            List<EventEntity> events = eventDAO.getEventsByUserId(currentUserId); // Sử dụng FirebaseEventDAO
             List<Reminder> reminders = new ArrayList<>();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
