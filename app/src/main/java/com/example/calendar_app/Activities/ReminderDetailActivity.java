@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -262,6 +263,7 @@ public class ReminderDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(EventEntity loadedEvent) {
+            Log.d("ReminderDetailActivity2", "Received eventId: " + loadedEvent);
             if (loadedEvent != null) {
                 event = loadedEvent;
                 updateUI();

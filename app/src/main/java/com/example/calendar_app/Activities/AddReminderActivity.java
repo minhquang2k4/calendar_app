@@ -1,10 +1,15 @@
 package com.example.calendar_app.Activities;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -14,14 +19,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.DAO.EventDAO;
 import com.example.calendar_app.Entities.EventEntity;
+import com.example.calendar_app.MyService;
 import com.example.calendar_app.R;
+import com.example.calendar_app.ReminderReceiver;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class AddReminderActivity extends AppCompatActivity {
@@ -137,6 +147,7 @@ public class AddReminderActivity extends AppCompatActivity {
         );
         timePickerDialog.show();
     }
+    private EventEntity currentEvent;
 
     private void saveEvent() {
         String title = titleEditText.getText().toString().trim();
@@ -161,34 +172,117 @@ public class AddReminderActivity extends AppCompatActivity {
             }
         }
 
-        EventEntity event = new EventEntity();
-        event.userId = userId;
-        event.title = title;
-        event.description = description;
-        event.startDate = startDate.format(dbDateFormatter);
-        event.startTime = startTime.format(timeFormatter);
-        event.endDate = endDate.format(dbDateFormatter);
-        event.endTime = endTime.format(timeFormatter);
-        event.hasNotification = hasNotification;
-        event.reminderOffset = notificationMinutes;
+        currentEvent = new EventEntity();
 
-        new SaveEventTask().execute(event);
+
+        currentEvent.userId = userId;
+        currentEvent.title = title;
+        currentEvent.description = description;
+        currentEvent.startDate = startDate.format(dbDateFormatter);
+        currentEvent.startTime = startTime.format(timeFormatter);
+        currentEvent.endDate = endDate.format(dbDateFormatter);
+        currentEvent.endTime = endTime.format(timeFormatter);
+        currentEvent.hasNotification = hasNotification;
+        currentEvent.reminderOffset = notificationMinutes;
+
+        new SaveEventTask().execute(currentEvent);
     }
 
     private class SaveEventTask extends AsyncTask<EventEntity, Void, Long> {
+        private EventEntity eventToInsert;
         @Override
         protected Long doInBackground(EventEntity... events) {
-            return db.eventDao().insert(events[0]);
+            eventToInsert = events[0];
+            long insertedId = db.eventDao().insert(eventToInsert);
+            eventToInsert.id = (int) insertedId; // Gán lại ID thực vào object
+            return insertedId;
         }
 
         @Override
         protected void onPostExecute(Long eventId) {
+
             Toast.makeText(AddReminderActivity.this, "Sự kiện đã được thêm", Toast.LENGTH_SHORT).show();
+
+
+
             Intent resultIntent = new Intent();
             resultIntent.putExtra("EVENT_ID", eventId.intValue());
             setResult(RESULT_OK, resultIntent);
+//            Intent intent = new Intent(AddReminderActivity.this, MyService.class);
+//            intent.putExtra("title", "Sự kiện: " + currentEvent.title);
+//            intent.putExtra("description", currentEvent.description);
+
+//
+//            startService(intent);
             finish();
+            if (currentEvent.hasNotification) {
+                Log.d("Add", "co thong bao" );
+                scheduleNotification(currentEvent);
+            }
+
         }
+        private void scheduleNotification(EventEntity event) {
+            Intent intent = new Intent(AddReminderActivity.this, ReminderReceiver.class);
+            intent.putExtra("title", event.title);
+            intent.putExtra("description", event.description);
+            intent.putExtra("eventId", event.id);
+
+            Log.d("Add", "Đang lên lịch thông báo cho event ID: " + event.id);
+
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    AddReminderActivity.this,
+                    event.id,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            LocalDateTime eventDateTime = LocalDateTime.parse(
+                    event.startDate + "T" + event.startTime
+            );
+
+            Log.d("Add", "Thời gian sự kiện: " + eventDateTime);
+            LocalDateTime reminderDateTime = eventDateTime.minusMinutes(event.reminderOffset);
+            Log.d("Add", "Thời gian thông báo: " + reminderDateTime);
+
+            long triggerAtMillis = reminderDateTime
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli();
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                if (!alarmManager.canScheduleExactAlarms()) {
+                    Toast.makeText(AddReminderActivity.this,
+                            "Vui lòng cho phép ứng dụng đặt báo thức chính xác trong cài đặt",
+                            Toast.LENGTH_LONG).show();
+
+                    Intent settingsIntent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                    startActivity(settingsIntent);
+                    return;
+                }
+            }
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if (alarmManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    alarmManager.setExactAndAllowWhileIdle(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                    );
+                } else {
+                    alarmManager.setExact(
+                            AlarmManager.RTC_WAKEUP,
+                            triggerAtMillis,
+                            pendingIntent
+                    );
+                    Log.d("Add", "setExact");
+                }
+            }
+        }
+
     }
 
     @Override
