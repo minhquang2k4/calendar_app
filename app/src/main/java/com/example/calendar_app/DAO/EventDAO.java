@@ -29,4 +29,8 @@ public interface EventDAO {
 
     @Query("SELECT * FROM events WHERE user_id = :userId AND start_date = :date ORDER BY start_time ASC")
     List<EventEntity> getEventsByUserAndDate(int userId, String date);
+
+    @Query("SELECT * FROM events WHERE user_id = :userId AND hasNotification = 1 AND start_Date >= :date")
+    List<EventEntity> getUpcomingEventsWithNotifications(int userId, String date);
+
 }
