@@ -1,6 +1,7 @@
 package com.example.calendar_app.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,12 +29,26 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        int savedUserId = prefs.getInt("USER_ID", -1);
+
+        if (savedUserId != -1) {
+
+            Intent intent = new Intent(this, CalendarActivity.class);
+            intent.putExtra("USER_ID", savedUserId);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
-
         db = AppDatabase.getDatabase(this);
-
         initViews();
         setupListeners();
+
+
+
     }
 
     private void initViews() {
@@ -98,6 +113,10 @@ public class LoginActivity extends AppCompatActivity {
             if (user != null) {
                 Log.d(TAG, "Login successful for user: " + user.phone + ", ID: " + user.id);
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
+
+                SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                prefs.edit().putInt("USER_ID", user.id).apply();
+
                 Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
                 intent.putExtra("USER_ID", user.id);
                 startActivity(intent);

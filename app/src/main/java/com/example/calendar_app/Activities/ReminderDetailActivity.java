@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -57,11 +58,13 @@ public class ReminderDetailActivity extends AppCompatActivity {
 
         db = AppDatabase.getDatabase(this);
         eventId = getIntent().getIntExtra("EVENT_ID", -1);
+        Log.d("Notisss", "id 2 " + eventId);
         userId = getIntent().getIntExtra("USER_ID", -1);
 
         initializeViews();
         loadEventData();
         setupListeners();
+
     }
 
     private void initializeViews() {

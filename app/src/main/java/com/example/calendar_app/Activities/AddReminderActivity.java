@@ -1,9 +1,12 @@
 package com.example.calendar_app.Activities;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RadioButton;
@@ -15,6 +18,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.calendar_app.AppDatabase;
 import com.example.calendar_app.Entities.EventEntity;
+
 import com.example.calendar_app.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -68,7 +72,21 @@ public class AddReminderActivity extends AppCompatActivity {
         notificationSwitch = findViewById(R.id.notificationSwitch);
         notificationTimeRadioGroup = findViewById(R.id.notificationTimeRadioGroup);
         saveButton = findViewById(R.id.saveButton);
+
+
+        if (notificationSwitch.isChecked()) {
+            requestNotificationPermissionIfNeeded();
+        }
     }
+    private void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
+
+    }
+
 
     private void initializeDefaultValues(String selectedDateStr) {
         startDate = selectedDateStr != null ? LocalDate.parse(selectedDateStr) : LocalDate.now();
