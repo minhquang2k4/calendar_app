@@ -1,12 +1,14 @@
 package com.example.calendar_app.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,6 +66,23 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
             intent.putExtra("USER_ID", currentUserId);
             intent.putExtra("SELECTED_DATE", selectedDate.toString());
             startActivityForResult(intent, 1);
+        });
+        TextView tvLogout = findViewById(R.id.tvLogout);
+        tvLogout.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Đăng xuất")
+                    .setMessage("Bạn có chắc muốn đăng xuất?")
+                    .setPositiveButton("Đồng ý", (dialog, which) -> {
+                        // Xử lý đăng xuất
+                        SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                        prefs.edit().remove("USER_ID").apply();
+
+                        Intent intent = new Intent(this, LoginActivity.class);
+                        startActivity(intent);
+                        finishAffinity();
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
         });
     }
 
