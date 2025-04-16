@@ -26,22 +26,24 @@ public class ReminderReceiver extends BroadcastReceiver {
         Log.d("ReminderReceiver", "Receiver triggered");
 
         executor.execute(() -> {
-
-
             AppDatabase db = AppDatabase.getDatabase(context);
 
-            int userId = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-                    .getInt("USER_ID", -1);
-
+            String userId = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+                    .getString("USER_ID", null);
+            
+            if (userId == null) {
+                Log.e("ReminderReceiver", "User ID not found");
+                return;
+            }
 
             try {
                 String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
+                
                 List<EventEntity> events = db.eventDao().getUpcomingEventsWithNotifications(userId, today);
 
                 for (EventEntity event : events) {
                     Log.d("ReminderReceiver", "- Tiêu đề: " + event.title);
-
+                    
                     scheduleNotification(context, event);
                 }
             } catch (Exception e) {
@@ -56,7 +58,6 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         long triggerMillis = reminderTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
-
         if (System.currentTimeMillis() > triggerMillis) {
             Log.d("ReminderReceiver", "Thời gian nhắc đã qua, không tạo notification cho sự kiện ID: " + event.id);
             return;
@@ -67,20 +68,20 @@ public class ReminderReceiver extends BroadcastReceiver {
         notifIntent.putExtra("description", event.description);
         notifIntent.putExtra("eventId", event.id);
 
+        // Use a hashcode of the UUID string as the request code
+        int requestCode = event.id.hashCode();
+        
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
-                event.id,
+                requestCode,
                 notifIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
-
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerMillis, pendingIntent);
         }
-
-
     }
 }
 

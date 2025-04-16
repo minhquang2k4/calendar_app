@@ -30,7 +30,7 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
     private TextView selectedDateTV;
     private LocalDate selectedDate;
     private AppDatabase db;
-    private int currentUserId;
+    private String currentUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,8 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
         setContentView(R.layout.activity_calendar);
 
         db = AppDatabase.getDatabase(this);
-        currentUserId = getIntent().getIntExtra("USER_ID", -1);
-        if (currentUserId == -1) {
+        currentUserId = getIntent().getStringExtra("USER_ID");
+        if (currentUserId == null) {
             Toast.makeText(this, "Không tìm thấy người dùng", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -83,7 +83,7 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
     @Override
     public void onReminderClick(Reminder reminder) {
         Intent intent = new Intent(this, ReminderDetailActivity.class);
-        intent.putExtra("EVENT_ID", Integer.parseInt(reminder.getId()));
+        intent.putExtra("EVENT_ID", reminder.getId());
         intent.putExtra("USER_ID", currentUserId);
         startActivityForResult(intent, 2);
     }
@@ -100,7 +100,7 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
                 LocalDate startDate = LocalDate.parse(event.startDate, dateFormatter);
                 if (startDate.equals(selectedDate)) {
                     Reminder reminder = new Reminder(
-                            String.valueOf(event.id),
+                            event.id,
                             event.title,
                             event.description,
                             startDate,
@@ -130,8 +130,8 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
         if (resultCode == RESULT_OK) {
             updateReminderList();
             if (requestCode == 1 && data != null) { // Sau khi thêm sự kiện
-                int eventId = data.getIntExtra("EVENT_ID", -1);
-                if (eventId != -1) {
+                String eventId = data.getStringExtra("EVENT_ID");
+                if (eventId != null) {
                     Intent detailIntent = new Intent(this, ReminderDetailActivity.class);
                     detailIntent.putExtra("EVENT_ID", eventId);
                     detailIntent.putExtra("USER_ID", currentUserId);

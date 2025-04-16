@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.calendar_app.App;
 import com.example.calendar_app.AppDatabase;
 import com.example.calendar_app.Entities.UserEntity;
 import com.example.calendar_app.R;
@@ -26,15 +27,15 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvRegister, tvForgotPassword;
     private AppDatabase db;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-        int savedUserId = prefs.getInt("USER_ID", -1);
+        String savedUserId = prefs.getString("USER_ID", null);
 
-        if (savedUserId != -1) {
-
+        if (savedUserId != null) {
             Intent intent = new Intent(this, CalendarActivity.class);
             intent.putExtra("USER_ID", savedUserId);
             startActivity(intent);
@@ -46,9 +47,6 @@ public class LoginActivity extends AppCompatActivity {
         db = AppDatabase.getDatabase(this);
         initViews();
         setupListeners();
-
-
-
     }
 
     private void initViews() {
@@ -115,7 +113,10 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
 
                 SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
-                prefs.edit().putInt("USER_ID", user.id).apply();
+                prefs.edit().putString("USER_ID", user.id).apply();
+
+                // Schedule reminder checks now that user is logged in
+                App.getInstance().scheduleReminderChecks();
 
                 Intent intent = new Intent(LoginActivity.this, CalendarActivity.class);
                 intent.putExtra("USER_ID", user.id);

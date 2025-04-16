@@ -35,7 +35,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private SwitchMaterial notificationSwitch;
     private RadioGroup notificationTimeRadioGroup;
     private AppDatabase db;
-    private int userId;
+    private String userId;
     private LocalDate startDate, endDate;
     private LocalTime startTime, endTime;
 
@@ -54,7 +54,7 @@ public class AddReminderActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Thêm sự kiện mới");
 
         db = AppDatabase.getDatabase(this);
-        userId = getIntent().getIntExtra("USER_ID", -1);
+        userId = getIntent().getStringExtra("USER_ID");
         String selectedDateStr = getIntent().getStringExtra("SELECTED_DATE");
 
         initializeViews();
@@ -193,17 +193,17 @@ public class AddReminderActivity extends AppCompatActivity {
         new SaveEventTask().execute(event);
     }
 
-    private class SaveEventTask extends AsyncTask<EventEntity, Void, Long> {
+    private class SaveEventTask extends AsyncTask<EventEntity, Void, Void> {
         @Override
-        protected Long doInBackground(EventEntity... events) {
-            return db.eventDao().insert(events[0]);
+        protected Void doInBackground(EventEntity... events) {
+            db.eventDao().insert(events[0]);
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Long eventId) {
+        protected void onPostExecute(Void aVoid) {
             Toast.makeText(AddReminderActivity.this, "Sự kiện đã được thêm", Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("EVENT_ID", eventId.intValue());
             setResult(RESULT_OK, resultIntent);
             finish();
         }

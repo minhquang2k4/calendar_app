@@ -24,15 +24,13 @@ public class test_DB extends AppCompatActivity {
 //        UserEntity user = new UserEntity();
 //        user.phone = "quang";
 //        user.password = "123456";
-//
+//        // UUID is automatically generated in UserEntity constructor
 //
 //       Log.d("calendar_log", "before add user");
 //       new Thread(() -> {
 //          db.userDao().insert(user);
 //       }).start();
 //       Log.d("calendar_log", "after add user");
-
-
 
         Log.d("calendar_log", "before get user");
         checkFirestoreConnection();

@@ -18,15 +18,24 @@ public class NotificationPublisher extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra("title");
         String description = intent.getStringExtra("description");
-        int eventId = intent.getIntExtra("eventId", -1);
-        Log.d("Notisss", "id" + eventId);
+        String eventId = intent.getStringExtra("eventId");
+        Log.d("Notisss", "id " + eventId);
+        
+        if (eventId == null) {
+            Log.e("NotificationPublisher", "Event ID not found in intent");
+            return;
+        }
+        
         Intent detailIntent = new Intent(context, ReminderDetailActivity.class);
         detailIntent.putExtra("EVENT_ID", eventId);
         detailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
+        // Use a hashcode of the UUID string as the request code
+        int requestCode = eventId.hashCode();
+        
         PendingIntent contentIntent = PendingIntent.getActivity(
                 context,
-                eventId,
+                requestCode,
                 detailIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -48,6 +57,8 @@ public class NotificationPublisher extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setAutoCancel(true);
 
-        notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+        // Generate a unique notification ID from the event ID
+        int notificationId = requestCode;
+        notificationManager.notify(notificationId, builder.build());
     }
 }

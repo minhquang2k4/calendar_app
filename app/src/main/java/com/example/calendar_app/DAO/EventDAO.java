@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface EventDAO {
     @Insert
-    Long insert(EventEntity event);
+    void insert(EventEntity event);
 
     @Update
     void update(EventEntity event);
@@ -22,15 +22,14 @@ public interface EventDAO {
     void delete(EventEntity event);
 
     @Query("SELECT * FROM events WHERE id = :id")
-    EventEntity getEventById(int id);
+    EventEntity getEventById(String id);
 
     @Query("SELECT * FROM events WHERE user_id = :userId ORDER BY start_date ASC, start_time ASC")
-    List<EventEntity> getEventsByUserId(int userId);
+    List<EventEntity> getEventsByUserId(String userId);
 
     @Query("SELECT * FROM events WHERE user_id = :userId AND start_date = :date ORDER BY start_time ASC")
-    List<EventEntity> getEventsByUserAndDate(int userId, String date);
+    List<EventEntity> getEventsByUserAndDate(String userId, String date);
 
     @Query("SELECT * FROM events WHERE user_id = :userId AND hasNotification = 1 AND start_Date >= :date")
-    List<EventEntity> getUpcomingEventsWithNotifications(int userId, String date);
-
+    List<EventEntity> getUpcomingEventsWithNotifications(String userId, String date);
 }

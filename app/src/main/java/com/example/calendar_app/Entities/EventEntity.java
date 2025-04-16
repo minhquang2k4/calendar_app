@@ -1,16 +1,20 @@
 package com.example.calendar_app.Entities;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.UUID;
+
 @Entity(tableName = "events")
 public class EventEntity {
-    @PrimaryKey(autoGenerate = true)
-    public int id;
+    @PrimaryKey
+    @NonNull
+    public String id = UUID.randomUUID().toString();
 
     @ColumnInfo(name = "user_id")
-    public int userId;
+    public String userId;
 
     @ColumnInfo(name = "title")
     public String title;
@@ -33,5 +37,6 @@ public class EventEntity {
     //    thoi gian nhac nho truoc khi den start time
     @ColumnInfo(name = "reminder_offset")
     public int reminderOffset;
+    
     public boolean hasNotification;
 }

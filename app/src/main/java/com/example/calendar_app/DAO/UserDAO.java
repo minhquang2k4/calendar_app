@@ -16,10 +16,11 @@ public interface UserDAO {
    void insert(UserEntity user);
 
    @Query("SELECT * FROM users WHERE id = :id")
-   UserEntity getUserById(int id);
+   UserEntity getUserById(String id);
 
    @Update
    void update(UserEntity user);
+   
    @Query("SELECT * FROM users WHERE phone = :phone AND password = :password")
    UserEntity getUserByPhoneAndPassword(String phone, String password);
 

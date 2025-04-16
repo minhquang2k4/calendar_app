@@ -11,7 +11,7 @@ import com.example.calendar_app.DAO.UserDAO;
 import com.example.calendar_app.Entities.EventEntity;
 import com.example.calendar_app.Entities.UserEntity;
 
-@Database(entities = {UserEntity.class, EventEntity.class}, version = 2, exportSchema = false)
+@Database(entities = {UserEntity.class, EventEntity.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase db;
 

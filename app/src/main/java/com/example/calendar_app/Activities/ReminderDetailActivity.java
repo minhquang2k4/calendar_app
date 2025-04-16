@@ -38,7 +38,7 @@ public class ReminderDetailActivity extends AppCompatActivity {
     private RadioGroup notificationTimeRadioGroup;
     private AppDatabase db;
     private EventEntity event;
-    private int eventId, userId;
+    private String eventId, userId;
     private LocalDate startDate, endDate;
     private LocalTime startTime, endTime;
 
@@ -57,9 +57,9 @@ public class ReminderDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         db = AppDatabase.getDatabase(this);
-        eventId = getIntent().getIntExtra("EVENT_ID", -1);
+        eventId = getIntent().getStringExtra("EVENT_ID");
         Log.d("Notisss", "id 2 " + eventId);
-        userId = getIntent().getIntExtra("USER_ID", -1);
+        userId = getIntent().getStringExtra("USER_ID");
 
         initializeViews();
         loadEventData();
@@ -257,9 +257,9 @@ public class ReminderDetailActivity extends AppCompatActivity {
         else return (minutes / (24 * 60)) + " ngày";
     }
 
-    private class LoadEventTask extends AsyncTask<Integer, Void, EventEntity> {
+    private class LoadEventTask extends AsyncTask<String, Void, EventEntity> {
         @Override
-        protected EventEntity doInBackground(Integer... ids) {
+        protected EventEntity doInBackground(String... ids) {
             return db.eventDao().getEventById(ids[0]);
         }
 

@@ -104,6 +104,7 @@ public class RegisterActivity extends AppCompatActivity {
             newUser.name = name;
             newUser.phone = phone;
             newUser.password = password;
+            // UUID is automatically generated in UserEntity constructor
 
             db.userDao().insert(newUser);
             return true;
