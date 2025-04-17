@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.DAO.EventDAO;
+import com.example.calendar_app.DAO.FirebaseEventDAO;
 import com.example.calendar_app.Entities.EventEntity;
 import com.example.calendar_app.R;
 import com.google.android.material.button.MaterialButton;
@@ -37,6 +39,7 @@ public class ReminderDetailActivity extends AppCompatActivity {
     private SwitchMaterial notificationSwitch;
     private RadioGroup notificationTimeRadioGroup;
     private AppDatabase db;
+    private FirebaseEventDAO eventDAO;
     private EventEntity event;
     private String eventId, userId;
     private LocalDate startDate, endDate;
@@ -57,6 +60,8 @@ public class ReminderDetailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         db = AppDatabase.getDatabase(this);
+        EventDAO roomEventDAO = db.eventDao();
+        eventDAO = new FirebaseEventDAO(roomEventDAO);
         eventId = getIntent().getStringExtra("EVENT_ID");
         Log.d("Notisss", "id 2 " + eventId);
         userId = getIntent().getStringExtra("USER_ID");
@@ -260,7 +265,7 @@ public class ReminderDetailActivity extends AppCompatActivity {
     private class LoadEventTask extends AsyncTask<String, Void, EventEntity> {
         @Override
         protected EventEntity doInBackground(String... ids) {
-            return db.eventDao().getEventById(ids[0]);
+            return eventDAO.getEventById(ids[0]);
         }
 
         @Override
@@ -294,7 +299,7 @@ public class ReminderDetailActivity extends AppCompatActivity {
     private class DeleteEventTask extends AsyncTask<EventEntity, Void, Void> {
         @Override
         protected Void doInBackground(EventEntity... events) {
-            db.eventDao().delete(events[0]);
+            eventDAO.delete(events[0]);
             return null;
         }
 

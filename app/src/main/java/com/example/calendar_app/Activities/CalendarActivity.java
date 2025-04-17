@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.DAO.EventDAO;
+import com.example.calendar_app.DAO.FirebaseEventDAO;
 import com.example.calendar_app.Entities.EventEntity;
 import com.example.calendar_app.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,6 +35,7 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
     private TextView selectedDateTV;
     private LocalDate selectedDate;
     private AppDatabase db;
+    private EventDAO eventDAO;
     private String currentUserId;
 
     @Override
@@ -40,6 +44,8 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
         setContentView(R.layout.activity_calendar);
 
         db = AppDatabase.getDatabase(this);
+        EventDAO roomEventDAO = db.eventDao();
+        eventDAO = new FirebaseEventDAO(roomEventDAO);
         currentUserId = getIntent().getStringExtra("USER_ID");
         if (currentUserId == null) {
             Toast.makeText(this, "Không tìm thấy người dùng", Toast.LENGTH_SHORT).show();
@@ -110,7 +116,13 @@ public class CalendarActivity extends AppCompatActivity implements ReminderAdapt
     private class LoadEventsTask extends AsyncTask<Void, Void, List<Reminder>> {
         @Override
         protected List<Reminder> doInBackground(Void... voids) {
-            List<EventEntity> events = db.eventDao().getEventsByUserId(currentUserId);
+            List<EventEntity> events = new ArrayList<>();
+            try {
+                events = eventDAO.getEventsByUserId(currentUserId);
+            } catch (Exception e) {
+                Log.e("CalendarActivity", "Error loading events: " + e.getMessage());
+            }
+
             List<Reminder> reminders = new ArrayList<>();
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
