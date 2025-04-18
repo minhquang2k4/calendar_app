@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.DAO.FirebaseUserDAO;
+import com.example.calendar_app.DAO.UserDAO;
 import com.example.calendar_app.Entities.UserEntity;
 import com.example.calendar_app.R;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,6 +22,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private TextView tvLogin;
     private AppDatabase db;
+    private FirebaseUserDAO userDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +30,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         db = AppDatabase.getDatabase(this);
+        UserDAO roomUserDAO = db.userDao();
+        userDAO = new FirebaseUserDAO(roomUserDAO);
 
         initViews();
         setupListeners();
@@ -80,7 +85,7 @@ public class RegisterActivity extends AppCompatActivity {
         new RegisterTask(name, phone, password).execute();
     }
 
-    private class RegisterTask extends AsyncTask<Void, Void, Boolean> {
+    private class RegisterTask extends AsyncTask<Void, Void, UserEntity> {
         private final String name;
         private final String phone;
         private final String password;
@@ -92,11 +97,11 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected UserEntity doInBackground(Void... voids) {
             // Check if phone already exists
-            UserEntity existingUser = db.userDao().getUserByPhone(phone);
+            UserEntity existingUser = userDAO.getUserByPhone(phone);
             if (existingUser != null) {
-                return false;
+                return null;
             }
 
             // Create new user
@@ -106,20 +111,25 @@ public class RegisterActivity extends AppCompatActivity {
             newUser.password = password;
             // UUID is automatically generated in UserEntity constructor
 
-            db.userDao().insert(newUser);
-            return true;
+            userDAO.insert(newUser);
+            return userDAO.getUserByPhone(phone);
         }
 
         @Override
-        protected void onPostExecute(Boolean success) {
-            if (success) {
-                Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
+        protected void onPostExecute(UserEntity user) {
+            if (user == null) {
                 Toast.makeText(RegisterActivity.this, "Phone number already registered", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // Hiển thị thông báo và chuyển hướng ngay đến LoginActivity
+            Toast.makeText(RegisterActivity.this, "Registration successful in Room", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+
+            // Đồng bộ lên Firebase ngầm, không chặn luồng chính
+            userDAO.syncToFirebase(user);
         }
     }
 }

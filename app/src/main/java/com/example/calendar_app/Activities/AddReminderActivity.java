@@ -17,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.calendar_app.AppDatabase;
+import com.example.calendar_app.DAO.EventDAO;
+import com.example.calendar_app.DAO.FirebaseEventDAO;
 import com.example.calendar_app.Entities.EventEntity;
 
 import com.example.calendar_app.R;
@@ -35,6 +37,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private SwitchMaterial notificationSwitch;
     private RadioGroup notificationTimeRadioGroup;
     private AppDatabase db;
+    private EventDAO eventDAO;
     private String userId;
     private LocalDate startDate, endDate;
     private LocalTime startTime, endTime;
@@ -54,6 +57,9 @@ public class AddReminderActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Thêm sự kiện mới");
 
         db = AppDatabase.getDatabase(this);
+        EventDAO roomEventDAO = db.eventDao();
+        eventDAO = new FirebaseEventDAO(roomEventDAO);
+
         userId = getIntent().getStringExtra("USER_ID");
         String selectedDateStr = getIntent().getStringExtra("SELECTED_DATE");
 
@@ -196,7 +202,7 @@ public class AddReminderActivity extends AppCompatActivity {
     private class SaveEventTask extends AsyncTask<EventEntity, Void, Void> {
         @Override
         protected Void doInBackground(EventEntity... events) {
-            db.eventDao().insert(events[0]);
+            eventDAO.insert(events[0]);
             return null;
         }
 
