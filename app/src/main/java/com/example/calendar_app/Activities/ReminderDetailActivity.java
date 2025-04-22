@@ -283,7 +283,7 @@ public class ReminderDetailActivity extends AppCompatActivity {
     private class UpdateEventTask extends AsyncTask<EventEntity, Void, Void> {
         @Override
         protected Void doInBackground(EventEntity... events) {
-            db.eventDao().update(events[0]);
+            eventDAO.update(events[0]);
             return null;
         }
 

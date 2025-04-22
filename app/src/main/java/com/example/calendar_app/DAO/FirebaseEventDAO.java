@@ -103,7 +103,6 @@ public class FirebaseEventDAO implements EventDAO {
                             // Lấy ID từ document ID
                             String docId = document.getId();
                             if (document.contains("id")) {
-                                // Nếu có trường id riêng biệt, sử dụng nó
                                 event.id = document.getString("id");
                             } else {
                                 // Nếu không có trường id, sử dụng document ID
